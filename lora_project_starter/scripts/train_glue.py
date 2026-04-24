@@ -91,7 +91,7 @@ def main() -> None:
         learning_rate=args.learning_rate,
         per_device_train_batch_size=args.batch_size,
         per_device_eval_batch_size=64,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         logging_strategy="epoch",
         seed=args.seed,
