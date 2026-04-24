@@ -1,3 +1,14 @@
 lora_env*
-lora_project_starter/results*
 *.pyc
+
+# Ignore all training checkpoints under results
+lora_project_starter/results/**/checkpoint-*/
+lora_project_starter/results/**/checkpoint-*/**
+
+# Ignore other generated files in results by default
+lora_project_starter/results/**
+
+# But keep these two files in each result folder
+!lora_project_starter/results/**/
+!lora_project_starter/results/**/summary.json
+!lora_project_starter/results/**/eval_history.csv

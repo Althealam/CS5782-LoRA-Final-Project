@@ -1,0 +1,24 @@
+{
+  "task": "mrpc",
+  "method": "lora",
+  "trainable_parameters": 887042,
+  "total_parameters": 124942082,
+  "runtime_seconds": 139.2216694355011,
+  "eval_metrics": {
+    "eval_loss": 0.5183084011077881,
+    "eval_accuracy": 0.7058823529411765,
+    "eval_precision": 0.7086614173228346,
+    "eval_recall": 0.967741935483871,
+    "eval_f1": 0.8181818181818182,
+    "eval_runtime": 2.2577,
+    "eval_samples_per_second": 180.714,
+    "eval_steps_per_second": 3.1,
+    "epoch": 3.0
+  },
+  "lora_targets": [
+    "query",
+    "value"
+  ],
+  "lora_rank": 8,
+  "lora_alpha": 16
+}
