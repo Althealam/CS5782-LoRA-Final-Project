@@ -13,15 +13,15 @@ Doing:
 - mnli
 2. LoRA
 - qqp
-
+- qnli
+- mnli
+3. Full
+- sst2
 
 TODO:
 1. Full
-- sst2
 - mrpc
 - qqp
 - qnli
 - mnli
 2. LoRA
-- qnli
-- mnli

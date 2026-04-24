@@ -49,6 +49,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lora_rank", type=int, default=8)
     parser.add_argument("--lora_alpha", type=int, default=16)
     parser.add_argument("--lora_targets", nargs="+", default=["query", "value"])
+    parser.add_argument(
+        "--resume_from_checkpoint",
+        type=str,
+        default=None,
+        help="Resume training: path to a checkpoint-* folder, or 'true' to load the latest checkpoint under --output_dir.",
+    )
     return parser.parse_args()
 
 
@@ -114,6 +120,10 @@ def main() -> None:
         eval_dataset=tokenized[eval_split],
         compute_metrics=lambda eval_pred: compute_metrics(eval_pred, args.task, metric),
     )
+
+    resume = args.resume_from_checkpoint
+    if resume is not None and resume.lower() in ("true", "1", "yes"):
+        resume = True
 
     start_time = time.time()
     trainer.train()
