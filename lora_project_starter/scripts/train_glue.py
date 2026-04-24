@@ -6,8 +6,9 @@ import time
 from pathlib import Path
 import evaluate
 import torch
+import csv
 from datasets import load_dataset
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -26,6 +27,8 @@ TASK_TO_KEYS = {
     "sst2": ("sentence", None),
     "mrpc": ("sentence1", "sentence2"),
     "qqp": ("question1", "question2"),
+    "qnli": ("question", "sentence"),
+    "mnli": ("premise", "hypothesis")
 }
 
 
@@ -54,13 +57,15 @@ def main() -> None:
     os.makedirs(args.output_dir, exist_ok=True)
     torch.manual_seed(args.seed)
 
+    # ------ Model & Tokenizer & Metric ------
     dataset = load_dataset("glue", args.task)
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     metric = evaluate.load("glue", args.task)
 
-    num_labels = 2
+    num_labels = 3 if args.task == "mnli" else 2
     model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
 
+    # ------ Training strategy ------
     if args.method == "frozen":
         freeze_all_but_classifier(model)
     elif args.method == "lora":
@@ -100,11 +105,13 @@ def main() -> None:
         report_to="none",
     )
 
+    eval_split = "validation_matched" if args.task == "mnli" else "validation"
+
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=tokenized["train"],
-        eval_dataset=tokenized["validation"],
+        eval_dataset=tokenized[eval_split],
         compute_metrics=lambda eval_pred: compute_metrics(eval_pred, args.task, metric),
     )
 
@@ -112,6 +119,7 @@ def main() -> None:
     trainer.train()
     runtime_seconds = time.time() - start_time
     eval_metrics = trainer.evaluate()
+    eval_history = export_eval_history(trainer, args.output_dir)
 
     trainable, total = count_trainable_parameters(model)
     result = {
@@ -132,13 +140,20 @@ def main() -> None:
     print(json.dumps(result, indent=2))
 
 
+# ------ Metrics ------
 def compute_metrics(eval_pred, task_name, glue_metric):
     logits, labels = eval_pred
     preds = logits.argmax(axis=-1)
+    average = "macro" if task_name == "mnli" else "binary"
 
-    results = {"accuracy": accuracy_score(labels, preds)}
-    if task_name == "mrpc":
-        results["f1"] = f1_score(labels, preds)
+    results = {
+        "accuracy": accuracy_score(labels, preds),
+        "precision": precision_score(labels, preds, average=average, zero_division=0),
+        "recall": recall_score(labels, preds, average=average, zero_division=0),
+        "f1": f1_score(labels, preds, average=average, zero_division=0)
+    }
+    # if task_name == "mrpc":
+    #     results["f1"] = f1_score(labels, preds)
 
     try:
         results.update(glue_metric.compute(predictions=preds, references=labels))
@@ -146,6 +161,53 @@ def compute_metrics(eval_pred, task_name, glue_metric):
         pass
 
     return results
+
+
+def export_eval_history(trainer: Trainer, output_dir: str) -> list[dict]:
+    """Collect per-eval metrics from Trainer log history and save as CSV."""
+    records = []
+    for item in trainer.state.log_history:
+        if "eval_accuracy" not in item:
+            continue
+
+        row = {
+            "epoch": item.get("epoch", float("nan")),
+            "step": item.get("step", float("nan")),
+            "eval_loss": item.get("eval_loss", float("nan")),
+            "eval_accuracy": item.get("eval_accuracy", float("nan")),
+            "eval_f1": item.get("eval_f1", float("nan")),
+            "eval_precision": item.get("eval_precision", float("nan")),
+            "eval_recall": item.get("eval_recall", float("nan")),
+            "eval_runtime": item.get("eval_runtime", float("nan")),
+        }
+        records.append(row)
+
+    csv_path = os.path.join(output_dir, "eval_history.csv")
+    fieldnames = [
+        "epoch",
+        "step",
+        "eval_loss",
+        "eval_accuracy",
+        "eval_f1",
+        "eval_precision",
+        "eval_recall",
+        "eval_runtime",
+    ]
+
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(records)
+
+    print("\nPer-eval metrics:")
+    for r in records:
+        print(
+            f"epoch={r['epoch']}, step={r['step']}, "
+            f"acc={r['eval_accuracy']}, f1={r['eval_f1']}, loss={r['eval_loss']}"
+        )
+    print(f"Saved eval history to: {csv_path}")
+
+    return records
 
 
 def freeze_all_but_classifier(model) -> None:
