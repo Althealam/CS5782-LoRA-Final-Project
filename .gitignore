@@ -12,3 +12,5 @@ lora_project_starter/results/**
 !lora_project_starter/results/**/
 !lora_project_starter/results/**/summary.json
 !lora_project_starter/results/**/eval_history.csv
+
+*.log

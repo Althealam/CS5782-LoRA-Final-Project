@@ -122,11 +122,11 @@ def main() -> None:
     )
 
     resume = args.resume_from_checkpoint
-    if resume is not None and resume.lower() in ("true", "1", "yes"):
+    if isinstance(resume, str) and resume.lower() in ("true", "1", "yes"):
         resume = True
 
     start_time = time.time()
-    trainer.train()
+    trainer.train(resume_from_checkpoint=resume)
     runtime_seconds = time.time() - start_time
     eval_metrics = trainer.evaluate()
     eval_history = export_eval_history(trainer, args.output_dir)

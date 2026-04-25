@@ -8,19 +8,16 @@ Done:
 2. LoRA
 - sst2
 - mrpc
+- qnli
 
 Doing: 
 1. LoRA
 - qqp
-- qnli
 - mnli
 2. Full
 - sst2
 - qnli
 - mnli
-
-TODO:
-1. Full
 - mrpc
 - qqp
-2. LoRA
+
