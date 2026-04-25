@@ -1,0 +1,24 @@
+{
+  "task": "qqp",
+  "method": "lora",
+  "trainable_parameters": 887042,
+  "total_parameters": 124942082,
+  "runtime_seconds": 14341.229964494705,
+  "eval_metrics": {
+    "eval_loss": 0.28944268822669983,
+    "eval_accuracy": 0.8736087064061341,
+    "eval_precision": 0.805068347793521,
+    "eval_recall": 0.8665099093046691,
+    "eval_f1": 0.8346599365818935,
+    "eval_runtime": 242.1946,
+    "eval_samples_per_second": 166.932,
+    "eval_steps_per_second": 2.609,
+    "epoch": 3.0
+  },
+  "lora_targets": [
+    "query",
+    "value"
+  ],
+  "lora_rank": 8,
+  "lora_alpha": 16
+}

@@ -1,0 +1,24 @@
+{
+  "task": "mnli",
+  "method": "lora",
+  "trainable_parameters": 887811,
+  "total_parameters": 124942851,
+  "runtime_seconds": 19447.589051008224,
+  "eval_metrics": {
+    "eval_loss": 0.39182552695274353,
+    "eval_accuracy": 0.8495160468670403,
+    "eval_precision": 0.8483651643005393,
+    "eval_recall": 0.8485716767648852,
+    "eval_f1": 0.8484414843180151,
+    "eval_runtime": 45.1584,
+    "eval_samples_per_second": 217.346,
+    "eval_steps_per_second": 3.41,
+    "epoch": 3.0
+  },
+  "lora_targets": [
+    "query",
+    "value"
+  ],
+  "lora_rank": 8,
+  "lora_alpha": 16
+}
