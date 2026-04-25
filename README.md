@@ -4,24 +4,23 @@ Done:
 - mrpc
 - qqp
 - qnli
+- mnli
 2. LoRA
 - sst2
 - mrpc
 
 Doing: 
-1. Frozen
-- mnli
-2. LoRA
+1. LoRA
 - qqp
 - qnli
 - mnli
-3. Full
+2. Full
 - sst2
+- qnli
+- mnli
 
 TODO:
 1. Full
 - mrpc
 - qqp
-- qnli
-- mnli
 2. LoRA
