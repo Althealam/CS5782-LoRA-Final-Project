@@ -1,7 +1,0 @@
-torch
-transformers
-datasets
-evaluate
-scikit-learn
-pandas
-accelerate
