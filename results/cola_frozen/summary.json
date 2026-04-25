@@ -1,0 +1,25 @@
+{
+  "task": "cola",
+  "method": "frozen",
+  "trainable_parameters": 592130,
+  "total_parameters": 124647170,
+  "runtime_seconds": 216.4398639202118,
+  "eval_metrics": {
+    "eval_loss": 0.6106286644935608,
+    "eval_accuracy": 0.6912751677852349,
+    "eval_precision": 0.6912751677852349,
+    "eval_recall": 1.0,
+    "eval_f1": 0.8174603174603174,
+    "eval_matthews_correlation": 0.0,
+    "eval_runtime": 6.0921,
+    "eval_samples_per_second": 171.205,
+    "eval_steps_per_second": 2.791,
+    "epoch": 3.0
+  },
+  "lora_targets": [
+    "query",
+    "value"
+  ],
+  "lora_rank": 8,
+  "lora_alpha": 16
+}

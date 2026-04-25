@@ -28,7 +28,8 @@ TASK_TO_KEYS = {
     "mrpc": ("sentence1", "sentence2"),
     "qqp": ("question1", "question2"),
     "qnli": ("question", "sentence"),
-    "mnli": ("premise", "hypothesis")
+    "mnli": ("premise", "hypothesis"),
+    "cola": ("sentence", None)
 }
 
 
@@ -189,6 +190,7 @@ def export_eval_history(trainer: Trainer, output_dir: str) -> list[dict]:
             "eval_precision": item.get("eval_precision", float("nan")),
             "eval_recall": item.get("eval_recall", float("nan")),
             "eval_runtime": item.get("eval_runtime", float("nan")),
+            "eval_matthews_correlation": item.get("eval_matthews_correlation", float("nan"))
         }
         records.append(row)
 
@@ -202,6 +204,7 @@ def export_eval_history(trainer: Trainer, output_dir: str) -> list[dict]:
         "eval_precision",
         "eval_recall",
         "eval_runtime",
+        "eval_matthews_correlation"
     ]
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
