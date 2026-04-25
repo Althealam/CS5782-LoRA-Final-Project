@@ -112,7 +112,7 @@ def parse_float_list(raw: str):
 
 def build_parser():
     parser = argparse.ArgumentParser(description="LoRA hyperparameter sweep runner")
-    parser.add_argument("--task", type=str, default="mrpc")
+    parser.add_argument("--task", type=str, default="mnli")
     parser.add_argument("--model", type=str, default="roberta-base")
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--max-len", type=int, default=128, dest="max_len")
