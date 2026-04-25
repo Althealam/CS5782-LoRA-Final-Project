@@ -9,12 +9,9 @@ Done:
 - sst2
 - mrpc
 - qnli
-
-Doing: 
-1. LoRA
 - qqp
 - mnli
-2. Full
+3. Full
 - sst2
 - qnli
 - mnli
