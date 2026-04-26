@@ -7,7 +7,7 @@ This project focuses on evaluating LoRA on GLUE tasks, with three main goals:
 
 ## 1) Overall Performance on GLUE
 
-![Performance Comparison](assets/performance comparison.png)
+![Performance Comparison](assets/performance%20comparison.png)
 
 Key findings:
 - LoRA achieves performance close to, and sometimes better than, Full Fine-tuning on multiple tasks.
@@ -17,7 +17,7 @@ Key findings:
 
 ## 2) Parameter Efficiency
 
-![Parameter Efficiency](assets/parameter efficiency.png)
+![Parameter Efficiency](assets/parameter%20efficiency.png)
 
 Key findings:
 - Full Fine-tuning uses about `124.6M` trainable parameters (100%).
@@ -39,7 +39,7 @@ Main settings used in this study:
 
 ## 4) Effect of Rank on MNLI
 
-![Effect of Rank](assets/effect of rank.png)
+![Effect of Rank](assets/effect%20of%20rank.png)
 
 Key findings:
 - In this sweep, `r=16` performs best (MNLI accuracy `85.94`).
@@ -48,7 +48,7 @@ Key findings:
 
 ## 5) Effect of Alpha on MNLI
 
-![Effect of Alpha](assets/effect of alpha.png)
+![Effect of Alpha](assets/effect%20of%20alpha.png)
 
 Key findings:
 - Accuracy improves steadily as alpha increases from `8` to `64`.
@@ -57,7 +57,7 @@ Key findings:
 
 ## 6) Weight Merging Consistency (MNLI)
 
-![Weight Merging](assets/weight merging.png)
+![Weight Merging](assets/weight%20merging.png)
 
 Key findings:
 - Unmerged and merged models have identical core metrics: `Accuracy=0.8566`, `F1=0.8557`, `Loss=0.3767`.
