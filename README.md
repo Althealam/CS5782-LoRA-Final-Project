@@ -22,3 +22,5 @@ Done:
 TODO:
 1. hyperparameter sweep 
 - mnli (including: learning rate, rank, alpha, batch size, seeds)
+
+Results:
