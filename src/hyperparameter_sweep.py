@@ -116,16 +116,16 @@ def build_parser():
     parser.add_argument("--model", type=str, default="roberta-base")
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--max-len", type=int, default=128, dest="max_len")
-    parser.add_argument("--seeds", type=parse_int_list, default=[42, 43, 44, 45, 46],
+    parser.add_argument("--seeds", type=parse_int_list, default=42,
                         help="Comma-separated seeds, e.g. 42,43,44")
 
     parser.add_argument("--rank-list", type=parse_int_list, default=[4, 8, 16],
                         help="Comma-separated LoRA ranks")
     parser.add_argument("--alpha-list", type=parse_int_list, default=[8, 16, 32],
                         help="Comma-separated LoRA alphas")
-    parser.add_argument("--lr-list", type=parse_float_list, default=[1e-4, 2e-4, 4e-4],
+    parser.add_argument("--lr-list", type=parse_float_list, default=1e-4,
                         help="Comma-separated learning rates")
-    parser.add_argument("--bs-list", type=parse_int_list, default=[16, 32],
+    parser.add_argument("--bs-list", type=parse_int_list, default=32,
                         help="Comma-separated batch sizes")
     parser.add_argument("--results-root", type=str, default="../results")
     return parser

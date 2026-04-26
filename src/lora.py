@@ -87,6 +87,20 @@ def count_trainable_parameters(model: nn.Module) -> tuple[int, int]:
     return trainable, total
 
 
+def merge_lora_adapters(model: nn.Module) -> int:
+    """Merge all LoRALinear adapters into plain Linear modules in-place."""
+    replaced = 0
+    for name, module in list(model.named_modules()):
+        if not isinstance(module, LoRALinear):
+            continue
+
+        merged_linear = _merge_single_lora_linear(module)
+        _set_module_by_qualified_name(model, name, merged_linear)
+        replaced += 1
+
+    return replaced
+
+
 def _copy_linear_to_lora(old_linear: nn.Linear, r: int, alpha: int | None, dropout: float) -> LoRALinear:
     new_linear = LoRALinear(
         in_features=old_linear.in_features,
@@ -100,3 +114,24 @@ def _copy_linear_to_lora(old_linear: nn.Linear, r: int, alpha: int | None, dropo
     if old_linear.bias is not None and new_linear.base.bias is not None:
         new_linear.base.bias.data.copy_(old_linear.bias.data)
     return new_linear
+
+
+def _merge_single_lora_linear(module: LoRALinear) -> nn.Linear:
+    merged = nn.Linear(
+        in_features=module.base.in_features,
+        out_features=module.base.out_features,
+        bias=module.base.bias is not None,
+    )
+    delta = torch.matmul(module.B.weight.data, module.A.weight.data) * module.scaling
+    merged.weight.data.copy_(module.base.weight.data + delta)
+    if module.base.bias is not None and merged.bias is not None:
+        merged.bias.data.copy_(module.base.bias.data)
+    return merged
+
+
+def _set_module_by_qualified_name(root: nn.Module, qualified_name: str, new_module: nn.Module) -> None:
+    parent = root
+    parts = qualified_name.split(".")
+    for part in parts[:-1]:
+        parent = getattr(parent, part)
+    setattr(parent, parts[-1], new_module)

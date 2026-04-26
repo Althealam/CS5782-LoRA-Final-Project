@@ -20,7 +20,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.lora import count_trainable_parameters, mark_only_lora_and_classifier_trainable, replace_linear_with_lora
+from src.lora import (
+    count_trainable_parameters,
+    mark_only_lora_and_classifier_trainable,
+    merge_lora_adapters,
+    replace_linear_with_lora,
+)
 
 
 TASK_TO_KEYS = {
@@ -50,6 +55,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lora_rank", type=int, default=8)
     parser.add_argument("--lora_alpha", type=int, default=16)
     parser.add_argument("--lora_targets", nargs="+", default=["query", "value"])
+    parser.add_argument(
+        "--merge_adapter",
+        action="store_true",
+        help="After LoRA training, merge adapters into base linear layers and save merged model.",
+    )
+    parser.add_argument(
+        "--merged_output_dir",
+        type=str,
+        default=None,
+        help="Optional output dir for merged model; defaults to <output_dir>/merged.",
+    )
     parser.add_argument(
         "--resume_from_checkpoint",
         type=str,
@@ -133,6 +149,17 @@ def main() -> None:
     eval_history = export_eval_history(trainer, args.output_dir)
 
     trainable, total = count_trainable_parameters(model)
+    merged_model_path = None
+    merged_lora_modules = 0
+    if args.method == "lora" and args.merge_adapter:
+        merged_lora_modules = merge_lora_adapters(model)
+        merged_model_path = args.merged_output_dir or os.path.join(args.output_dir, "merged")
+        os.makedirs(merged_model_path, exist_ok=True)
+        model.save_pretrained(merged_model_path)
+        tokenizer.save_pretrained(merged_model_path)
+        print(f"Merged {merged_lora_modules} LoRA modules into base model.")
+        print(f"Saved merged model to: {merged_model_path}")
+
     result = {
         "task": args.task,
         "method": args.method,
@@ -143,6 +170,9 @@ def main() -> None:
         "lora_targets": args.lora_targets,
         "lora_rank": args.lora_rank,
         "lora_alpha": args.lora_alpha,
+        "merge_adapter": args.merge_adapter,
+        "merged_lora_modules": merged_lora_modules,
+        "merged_model_path": merged_model_path,
     }
 
     with open(os.path.join(args.output_dir, "summary.json"), "w", encoding="utf-8") as f:
