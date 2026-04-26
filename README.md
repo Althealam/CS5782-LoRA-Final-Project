@@ -17,10 +17,7 @@ Done:
 - mnli
 - mrpc
 - qqp
+4. alpha and rank comparison on mnli task
 
 
-TODO:
-1. hyperparameter sweep 
-- mnli (including: learning rate, rank, alpha, batch size, seeds)
 
-Results:
