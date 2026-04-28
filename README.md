@@ -64,6 +64,29 @@ Key findings:
 - This confirms metric consistency before and after LoRA weight merging in this setup.
 - Runtime is slightly higher for the merged run in this record (`46.83s` vs `31.20s`), but the main conclusion (metric equivalence) still holds.
 
+## 7) Effect of Target Modules on MNLI
+
+![Effect of Target Modules](assets/lora_target_modules_performance.png)
+
+Key findings:
+- Using LoRA on `query` alone gives the weakest result, with `81.43%` accuracy.
+- Adding `value` leads to a noticeable jump, bringing accuracy up to `84.92%`.
+- The best result comes from adapting `query + value + key + dense`, which reaches `85.92%` accuracy and `85.83%` F1.
+- Overall, the pattern is pretty clear: adapting more attention-related modules helps on MNLI, though the gains get smaller as the setup becomes larger.
+
+
+## 8) Parameter and Runtime Cost of Target Modules
+
+![Target Module Cost](assets/lora_target_modules_efficiency.png)
+
+Key findings:
+- `Q` is the lightest setup, with `0.74M` trainable parameters, but it also gives the weakest performance.
+- Moving to `Q+V` increases the trainable parameters to `0.89M`, but the improvement in accuracy is large enough to make that tradeoff worthwhile.
+- `Q+V+K+D` is the largest of the three settings at `1.18M` trainable parameters, but that is still less than `1%` of the full model.
+- Training and evaluation both get a little slower as more modules are added, but the increase is fairly modest.
+- In practice, `Q+V` looks like a strong middle ground, while `Q+V+K+D` gives the best MNLI result if performance is the main priority.
+
+
 ## Final Takeaway
 
 - LoRA delivers near-Full-Fine-tuning performance on GLUE with far fewer trainable parameters.
