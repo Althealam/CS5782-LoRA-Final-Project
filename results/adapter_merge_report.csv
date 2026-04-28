@@ -1,0 +1,3 @@
+phase,summary_path,merge_adapter,lora_rank,lora_alpha,eval_accuracy,eval_f1,eval_loss,eval_runtime,delta_acc_vs_unmerged_ckpt,delta_f1_vs_unmerged_ckpt,delta_loss_vs_unmerged_ckpt
+train_and_merge_run,/root/autodl-tmp/exp_merge_mnli/lora_unmerged/summary.json,true,8,16,0.8566479877738156,0.8556987764004443,0.3766665756702423,46.8306,0.0,0.0,0.0
+eval_unmerged_from_ckpt,/root/autodl-tmp/exp_merge_mnli/eval_unmerged_from_ckpt/summary.json,false,8,16,0.8566479877738156,0.8556987764004443,0.3766665756702423,31.1991,0.0,0.0,0.0
