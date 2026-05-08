@@ -4,8 +4,6 @@
 ![Task](https://img.shields.io/badge/Task-Reproduction%20%26%20Analysis-0ea5e9?style=for-the-badge)
 ![Model](https://img.shields.io/badge/Model-BERT--base%20%2B%20LoRA-16a34a?style=for-the-badge)
 
-![LoRA on GLUE Overview](assets/performance%20comparison.png)
-
 This project evaluates **LoRA (Low-Rank Adaptation)** on GLUE with three goals:
 - Compare `LoRA` vs `Full Fine-tuning` vs `Frozen Backbone`.
 - Measure the **performance-efficiency tradeoff**.
