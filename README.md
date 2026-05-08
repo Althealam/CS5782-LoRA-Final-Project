@@ -13,9 +13,8 @@ This project evaluates **LoRA (Low-Rank Adaptation)** on GLUE with three goals:
 
 ## Quick Navigation
 - [A) Results Snapshot](#a-results-snapshot)
-- [B) 2-Page Report Writing Guide (Based on Course Requirement)](#b-2-page-report-writing-guide-based-on-course-requirement)
-- [C) Reproduction Workflow](#c-reproduction-workflow)
-- [D) Final Takeaways](#d-final-takeaways)
+- [B) Reproduction Workflow](#b-reproduction-workflow)
+- [C) Final Takeaways](#c-final-takeaways)
 
 ---
 
@@ -103,59 +102,7 @@ Key findings:
 
 ---
 
-## B) 2-Page Report Writing Guide (Based on Course Requirement)
-
-> For your submission, emphasize **Methodology**, **Results & Analysis**, and **Reflections**.
-
-### 1. Introduction (about 10-15%)
-- Problem: parameter-efficient adaptation of large language models for sentence-level tasks.
-- Motivation: reach near full fine-tuning quality with far fewer trainable parameters.
-- Paper context: include original paper title/authors and the method contribution (LoRA as low-rank adapters).
-- One-sentence project scope: "We re-implemented LoRA on GLUE and analyzed sensitivity on MNLI."
-
-### 2. Chosen Result (about 10-15%)
-- Chosen result suggestion: **LoRA vs Full Fine-tuning tradeoff** on GLUE + MNLI ablations.
-- Why this result: it directly tests the main claim that LoRA preserves performance while reducing trainable parameters.
-- Link to original paper artifact: cite the relevant figure/table from the paper that reports task-level quality and efficiency.
-
-### 3. Methodology (about 25-30%)  **<- focus**
-- Model: base transformer backbone + LoRA modules on selected attention/projection layers.
-- Dataset: GLUE benchmark; highlight MNLI for controlled ablation.
-- Metrics: accuracy/F1/loss; add runtime/parameter count for efficiency.
-- Experimental settings: rank/alpha sweeps, module-target sweeps, merge-vs-unmerged validation.
-- Repro details: seed strategy, hardware constraints, and deviations from original setup.
-
-### 4. Results & Analysis (about 30-35%)  **<- focus**
-- Compare reproduction results to paper trends, not only absolute numbers.
-- Explain discrepancy sources:
-  - scale differences (budget/hardware),
-  - implementation detail gaps,
-  - tuning scope and random seed variance.
-- Highlight robust findings from your runs:
-  - LoRA has strong efficiency gains with small quality loss,
-  - alpha is more sensitive than rank in tested ranges,
-  - weight merging preserves metrics.
-- Include at least one visual that couples quality and cost.
-
-### 5. Reflections (about 15-20%)  **<- focus**
-- Lessons learned:
-  - where reproduction is fragile,
-  - which hyperparameters matter most,
-  - what design decisions improved reliability.
-- What you would do next:
-  - larger-scale sweep,
-  - additional tasks/models,
-  - better regularization or search strategies.
-- Tie back to broader implication: practical fine-tuning for constrained compute.
-
-### 6. References
-- Original LoRA paper (full citation).
-- Any toolkit/frameworks (`Transformers`, `PEFT`, `PyTorch`, GLUE).
-- Dataset and benchmark references.
-
----
-
-## C) Reproduction Workflow
+## B) Reproduction Workflow
 
 ```mermaid
 flowchart LR
@@ -168,7 +115,7 @@ flowchart LR
 
 ---
 
-## D) Final Takeaways
+## C) Final Takeaways
 
 - LoRA delivers near-Full Fine-tuning performance on GLUE with dramatically fewer trainable parameters.
 - On MNLI, `alpha` shows a clearer impact than `rank` in the tested ranges.
