@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-label="Experiment story timeline">
+  <rect width="1200" height="360" rx="22" fill="#0f172a"/>
+  <text x="54" y="68" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700" fill="#e2e8f0">Experiment Storyline</text>
+
+  <line x1="85" y1="210" x2="1110" y2="210" stroke="#334155" stroke-width="8" stroke-linecap="round"/>
+
+  <circle cx="170" cy="210" r="22" fill="#8b5cf6"/>
+  <text x="126" y="152" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#ddd6fe">Baseline</text>
+  <text x="92" y="256" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#cbd5e1">Full / Frozen / LoRA</text>
+
+  <circle cx="390" cy="210" r="22" fill="#06b6d4"/>
+  <text x="337" y="152" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#cffafe">Training</text>
+  <text x="332" y="256" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#cbd5e1">GLUE and MNLI runs</text>
+
+  <circle cx="610" cy="210" r="22" fill="#22c55e"/>
+  <text x="548" y="152" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#dcfce7">Ablations</text>
+  <text x="532" y="256" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#cbd5e1">rank / alpha / modules</text>
+
+  <circle cx="830" cy="210" r="22" fill="#f59e0b"/>
+  <text x="776" y="152" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#fef3c7">Evaluate</text>
+  <text x="744" y="256" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#cbd5e1">Accuracy, F1, runtime</text>
+
+  <circle cx="1050" cy="210" r="22" fill="#ef4444"/>
+  <text x="998" y="152" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#fee2e2">Insights</text>
+  <text x="975" y="256" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#cbd5e1">Tradeoff conclusions</text>
+</svg>

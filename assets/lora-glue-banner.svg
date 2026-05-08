@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="LoRA on GLUE banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5f3ff"/>
+      <stop offset="100%" stop-color="#ecfeff"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" rx="28" fill="url(#bg)"/>
+  <text x="60" y="95" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#4c1d95">LoRA on GLUE</text>
+  <text x="60" y="132" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#334155">Parameter-Efficient Fine-Tuning Exploration</text>
+
+  <rect x="60" y="170" width="280" height="190" rx="18" fill="url(#card)" stroke="#c4b5fd"/>
+  <text x="88" y="215" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#6d28d9">Backbone</text>
+  <rect x="88" y="235" width="224" height="22" rx="8" fill="#ddd6fe"/>
+  <rect x="88" y="268" width="224" height="22" rx="8" fill="#ddd6fe"/>
+  <rect x="88" y="301" width="224" height="22" rx="8" fill="#ddd6fe"/>
+  <text x="91" y="350" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#64748b">Frozen weights</text>
+
+  <rect x="388" y="170" width="360" height="190" rx="18" fill="url(#card)" stroke="#67e8f9"/>
+  <text x="416" y="215" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#0f766e">LoRA Adapters</text>
+  <rect x="418" y="240" width="130" height="94" rx="10" fill="#ccfbf1" stroke="#2dd4bf"/>
+  <text x="468" y="293" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0f766e">A</text>
+  <text x="565" y="293" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#0891b2">×</text>
+  <rect x="600" y="240" width="130" height="94" rx="10" fill="#cffafe" stroke="#22d3ee"/>
+  <text x="665" y="293" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0369a1">B</text>
+  <text x="418" y="350" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#64748b">Train only low-rank updates</text>
+
+  <rect x="790" y="170" width="350" height="190" rx="18" fill="url(#card)" stroke="#86efac"/>
+  <text x="818" y="215" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#166534">GLUE Tasks</text>
+  <rect x="818" y="236" width="92" height="36" rx="10" fill="#dcfce7"/><text x="864" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#166534">MNLI</text>
+  <rect x="922" y="236" width="92" height="36" rx="10" fill="#dcfce7"/><text x="968" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#166534">QQP</text>
+  <rect x="1026" y="236" width="92" height="36" rx="10" fill="#dcfce7"/><text x="1072" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#166534">SST-2</text>
+  <rect x="818" y="286" width="140" height="28" rx="10" fill="#bbf7d0"/><text x="888" y="305" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#166534">High Accuracy</text>
+  <rect x="968" y="286" width="150" height="28" rx="10" fill="#bbf7d0"/><text x="1043" y="305" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#166534">Low Params</text>
+
+  <path d="M342 266 C365 266, 370 266, 388 266" stroke="#7c3aed" stroke-width="4" fill="none"/>
+  <polygon points="384,258 398,266 384,274" fill="#7c3aed"/>
+  <path d="M748 266 C771 266, 775 266, 790 266" stroke="#0f766e" stroke-width="4" fill="none"/>
+  <polygon points="786,258 800,266 786,274" fill="#0f766e"/>
+</svg>

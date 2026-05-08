@@ -4,6 +4,8 @@
 ![Task](https://img.shields.io/badge/Task-Reproduction%20%26%20Analysis-0ea5e9?style=for-the-badge)
 ![Model](https://img.shields.io/badge/Model-BERT--base%20%2B%20LoRA-16a34a?style=for-the-badge)
 
+![LoRA on GLUE Banner](assets/lora-glue-banner.svg)
+
 This project evaluates **LoRA (Low-Rank Adaptation)** on GLUE with three goals:
 - Compare `LoRA` vs `Full Fine-tuning` vs `Frozen Backbone`.
 - Measure the **performance-efficiency tradeoff**.
@@ -103,6 +105,8 @@ Key findings:
 ---
 
 ## B) Reproduction Workflow
+
+![Experiment Storyline](assets/experiment-story.svg)
 
 ```mermaid
 flowchart LR
