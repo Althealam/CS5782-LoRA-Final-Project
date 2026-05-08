@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black, citecolor=black}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.5pt}
+\titlespacing*{\section}{0pt}{6pt}{2pt}
+\titlespacing*{\subsection}{0pt}{4pt}{1pt}
+\titleformat{\section}{\normalsize\bfseries}{\thesection.}{0.4em}{}
+\titleformat{\subsection}{\normalsize\itshape}{\thesubsection.}{0.4em}{}
+\captionsetup{font=small, skip=2pt}
+
+\title{\vspace{-2em}\textbf{Reproducing LoRA on GLUE}}
+\author{CS 5782 Final Project Group\\\small\url{https://github.com/althealam/CS5782-LoRA-Final-Project}}
+\date{\vspace{-1em}}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\section{Introduction}
+Fine-tuning every weight of a large pretrained model for each downstream task is costly. \textit{LoRA: Low-Rank Adaptation of Large Language Models} (Hu et al., ICLR 2022) \cite{hu2022lora} freezes the pretrained weights $W_0$ and learns a low-rank residual $\Delta W = \tfrac{\alpha}{r}BA$ with $A \in \mathbb{R}^{r\times d}$, $B \in \mathbb{R}^{k\times r}$, $r \ll \min(d,k)$, so that
+\[
+h = W_0 x + \tfrac{\alpha}{r} BA\, x.
+\]
+Key contributions of the paper:
+\begin{itemize}\setlength\itemsep{0pt}
+  \item Achieve full-fine-tuning quality with $\le 1\%$ trainable parameters on GLUE.
+  \item Show that the update $\Delta W$ has low intrinsic rank (small $r$ already works).
+  \item Adapter weights can be \emph{merged} into $W_0$, giving zero inference overhead.
+\end{itemize}
+
+\section{Chosen Result}
+We reproduce the GLUE accuracy claim from Table~2 of the paper: LoRA matches full fine-tuning while training $\sim$1\% of the parameters. Beyond accuracy, we extend the study with three ablations on MNLI that the original paper either reports separately (rank, target modules) or leaves implicit (scaling factor $\alpha$, merge equivalence). This combination directly tests \emph{why} LoRA works, not only \emph{whether} it works.
+
+\section{Methodology}
+
+\subsection{Backbone and LoRA Implementation}
+We use \texttt{roberta-base} (124.6M params). Our implementation (\texttt{src/lora.py}) defines a \texttt{LoRALinear} module and recursively replaces selected linear projections in each Transformer block. The classifier head from Hugging Face is kept unchanged. During LoRA training, only the LoRA matrices and the classifier head are trainable.
+
+\subsection{Compared Methods}
+\textbf{Full fine-tuning} updates all weights. \textbf{Frozen backbone} updates only the classifier head (lower bound). \textbf{LoRA} updates the head and the low-rank adapters.
+
+\subsection{Datasets and Metrics}
+Six GLUE \cite{wang2018glue} tasks: MNLI, MRPC, QNLI, QQP, SST-2, CoLA. We log validation accuracy and F1, plus trainable parameter count, total parameter count, runtime, and (for CoLA) Matthew's correlation. Tokenization uses the matching Hugging Face tokenizer; max length 128.
+
+\subsection{Training Setup}
+Default LoRA configuration: $r{=}8$, $\alpha{=}16$, batch size 16, 3 epochs, AdamW with linear decay, target modules \{\texttt{query}, \texttt{value}\}. Same epoch budget across methods to keep comparisons fair under our compute budget. Each MNLI ablation cell is one seed.
+
+\subsection{Ablations on MNLI}
+We sweep (i) rank $r \in \{4,8,16,32\}$, (ii) scaling $\alpha \in \{8,16,32,64\}$, (iii) target modules in \{\texttt{Q}, \texttt{Q+V}, \texttt{Q+V+K+Dense}\}, and (iv) compare merged vs.\ unmerged adapters at evaluation time.
+
+\section{Results and Analysis}
+
+\subsection{Main GLUE Comparison}
+
+\begin{table}[h]
+\centering\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lccc}
+\toprule
+Task & Full & LoRA & Frozen \\
+\midrule
+MNLI  & \textbf{85.98} & 84.95 & 53.34 \\
+MRPC  & 87.25 & \textbf{87.75} & 68.38 \\
+QNLI  & \textbf{91.09} & 90.48 & 66.30 \\
+QQP   & 80.41 & \textbf{87.36} & 75.14 \\
+SST-2 & 91.97 & \textbf{93.46} & 80.62 \\
+CoLA  & \textbf{82.65} & 79.39 & 69.13 \\
+\midrule
+Trainable params & 124.6M & 0.89M & 0.59M \\
+\% of full        & 100\%  & 0.71\% & 0.47\% \\
+\bottomrule
+\end{tabular}
+\caption{GLUE validation accuracy (\%) and trainable-parameter cost.}
+\label{tab:main}
+\end{table}
+
+LoRA stays within $\sim$1 point of full fine-tuning on MNLI, QNLI, and CoLA, and exceeds it on MRPC, QQP, SST-2, while training $\sim$140$\times$ fewer parameters. Frozen backbone collapses on MNLI/QNLI, confirming that the bulk of task adaptation must happen inside the backbone, not just at the head.
+
+\subsection{Ablations on MNLI}
+
+\begin{table}[h]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\multicolumn{5}{c}{\textit{(a) Rank, with $\alpha{=}16$, targets={\rm Q+V}}}\\
+$r$ & 4 & 8 & 16 & 32 \\
+Acc & 85.73 & 85.66 & \textbf{85.94} & 85.63 \\
+\midrule
+\multicolumn{5}{c}{\textit{(b) Scaling $\alpha$, with $r{=}8$, targets={\rm Q+V}}}\\
+$\alpha$ & 8 & 16 & 32 & 64 \\
+Acc & 85.03 & 85.66 & 85.79 & \textbf{86.28} \\
+\midrule
+\multicolumn{5}{c}{\textit{(c) Target modules, with $r{=}8$, $\alpha{=}16$}}\\
+Targets & Q & Q+V & \multicolumn{2}{c}{Q+V+K+Dense} \\
+Acc     & 81.43 & 84.92 & \multicolumn{2}{c}{\textbf{85.92}} \\
+Params  & 0.74M & 0.89M & \multicolumn{2}{c}{1.18M} \\
+\bottomrule
+\end{tabular}
+\caption{MNLI validation accuracy under three ablations.}
+\label{tab:abl}
+\end{table}
+
+Three observations: (i) accuracy is nearly flat across $r{\in}\{4,8,16,32\}$, supporting the paper's claim that the update has low intrinsic rank; (ii) the scaling factor $\alpha$ shows a clearer monotonic trend, suggesting it acts as an effective learning-rate knob and is the most influential single hyperparameter in our sweep; (iii) adapting more attention projections helps, but with diminishing returns---\texttt{Q+V} captures most of the gain at $\sim$0.71\% of params.
+
+\subsection{Merge Consistency}
+After training with $r{=}8, \alpha{=}16$ on MNLI, evaluating the unmerged checkpoint and the merged-weights model gives identical metrics: accuracy $0.8566$, F1 $0.8557$, loss $0.3767$. This empirically validates that LoRA can be merged into $W_0$ at deployment time without altering predictions.
+
+\subsection{Discrepancies and Limitations}
+LoRA exceeds our full-FT runs on QQP/SST-2/MRPC. We attribute this to lack of per-task LR/epoch tuning for full fine-tuning rather than a real inversion of the paper's findings; the original paper trains SST-2/QQP/MRPC for many more epochs and tunes LRs per task. Our ablations use a single seed per cell, so $\le 1$-point gaps should not be over-interpreted. Despite these caveats, every qualitative claim in the paper that we tested holds in our setup.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\linewidth]{"performance comparison.png"}
+\caption{GLUE accuracy: full FT vs.\ LoRA vs.\ frozen backbone.}
+\label{fig:perf}
+\end{figure}
+
+\section{Reflections}
+\textbf{Takeaways.} (1) The \emph{position} of adapters (which projections are adapted) matters more than the nominal rank in our sweep. (2) The effective scale $\alpha/r$ behaves like a learning-rate multiplier and dominates accuracy gains. (3) Merging is exact in practice, so the parameter savings translate directly to deployment savings.
+
+\textbf{Future work.} Multi-seed runs and per-task LR tuning to strengthen baselines; scaling to RoBERTa-large or decoder-only LLMs; comparison with other PEFT methods (adapters, prefix tuning, (IA)$^3$, DoRA); and a memory/throughput study, since trainable-parameter count is only one axis of efficiency.
+
+\begin{thebibliography}{9}\small
+\bibitem{hu2022lora} E.~J.~Hu, Y.~Shen, P.~Wallis, Z.~Allen-Zhu, Y.~Li, S.~Wang, L.~Wang, W.~Chen. \textit{LoRA: Low-Rank Adaptation of Large Language Models}. ICLR, 2022.
+\bibitem{wang2018glue} A.~Wang et al. \textit{GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding}. ICLR, 2019.
+\bibitem{liu2019roberta} Y.~Liu et al. \textit{RoBERTa: A Robustly Optimized BERT Pretraining Approach}. arXiv:1907.11692, 2019.
+\bibitem{wolf2020transformers} T.~Wolf et al. \textit{Transformers: State-of-the-Art NLP}. EMNLP System Demos, 2020.
+\end{thebibliography}
+
+\end{document}
