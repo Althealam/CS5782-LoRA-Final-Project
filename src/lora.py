@@ -98,8 +98,17 @@ def mark_only_lora_and_classifier_trainable(model: nn.Module) -> None:
 
 
 def count_trainable_parameters(model: nn.Module) -> tuple[int, int]:
-    trainable = sum(param.numel() for param in model.parameters() if param.requires_grad)
-    total = sum(param.numel() for param in model.parameters())
+    trainable = 0
+    total = 0
+
+    for param in model.parameters():
+        num_params = param.numel()
+        total += num_params
+
+        # Only parameters with requires_grad=True are updated during training.
+        if param.requires_grad:
+            trainable += num_params
+
     return trainable, total
 
 
