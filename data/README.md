@@ -16,5 +16,3 @@ Tasks used in this project include:
 - QQP
 - SST-2
 - CoLA
-
-Please make sure your environment has internet access for the first download.
