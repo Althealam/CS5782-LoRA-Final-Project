@@ -53,6 +53,15 @@ def replace_linear_with_lora(
     alpha: int | None = None,
     dropout: float = 0.0,
 ) -> nn.Module:
+    """
+    Replace selected attention projections in the encoder with LoRA-wrapped versions.
+
+    Supported target names:
+    - query
+    - key
+    - value
+    - dense
+    """
     target_module_names = set(target_module_names)
 
     for name, module in model.named_modules():
