@@ -6,6 +6,13 @@ from torch import nn
 
 
 class LoRALinear(nn.Module):
+    """
+    Wrap a frozen linear layer with a trainable low-rank update.
+
+    Forward:
+        y = W0 x + (alpha / r) * B(A(x))
+    where W0 is frozen and A/B are trainable.
+    """
     def __init__(
         self,
         in_features: int,
@@ -16,19 +23,17 @@ class LoRALinear(nn.Module):
         bias: bool = True,
     ) -> None:
         super().__init__()
-        if r <= 0:
-            raise ValueError("LoRA rank r must be positive.")
 
         self.r = r
         self.alpha = alpha if alpha is not None else r
         self.scaling = self.alpha / self.r
         self.dropout = nn.Dropout(dropout) if dropout > 0 else nn.Identity()
-
+        # Frozen pretrained projection.
         self.base = nn.Linear(in_features, out_features, bias=bias)
         self.base.weight.requires_grad = False
         if self.base.bias is not None:
             self.base.bias.requires_grad = False
-
+        # low-rank update
         self.A = nn.Linear(in_features, r, bias=False)
         self.B = nn.Linear(r, out_features, bias=False)
 
@@ -36,7 +41,9 @@ class LoRALinear(nn.Module):
         nn.init.zeros_(self.B.weight)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.base(x) + self.B(self.A(self.dropout(x))) * self.scaling
+        base_out = self.base(x)
+        lora_out = self.B(self.A(self.dropout(x))) * self.scaling
+        return base_out + lora_out
 
 
 def replace_linear_with_lora(
